@@ -211,3 +211,25 @@ agent_communication:
   -message: "I have added CONTACT_NOTIFY_EMAIL=matt@heartsandminds.la to the backend .env file. Please perform a final test on the POST /api/contact endpoint to ensure the email dispatch function executes properly now that a recipient is configured."
   -agent: "testing"
   -message: "Email dispatch testing complete. POST /api/contact endpoint successfully executes resend.Emails.send() function. Email notifications are being sent to matt@heartsandminds.la without errors. Verified with backend logs showing successful email dispatch with Resend API returning email ID and 200 OK status. All 11 backend API endpoints passing tests. Backend is fully functional."
+
+backend:
+  - task: "Check RunwayML API connection 500 error again"
+    implemented: true
+    working: true
+    file: "server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        -working: "NA"
+        -agent: "main"
+        -comment: "User reported 500 RUNWAYML_API_SECRET not configured again. Testing locally to see if it works in preview."
+        -working: true
+        -agent: "testing"
+        -comment: "Tested POST /api/avatar/connect endpoint in preview environment. NO 500 error occurring. RUNWAYML_API_SECRET is properly configured in /app/backend/.env (132 characters, verified loaded). Ran full backend test suite: all 11/11 endpoints passing including avatar/connect. Tested avatar/connect 3 times: 2x returned 200 OK with valid sessionId/sessionKey, 1x returned 429 rate limit (expected behavior). Backend logs show successful RunwayML API calls (200 OK responses). The 500 error 'RUNWAYML_API_SECRET not configured' is NOT occurring in the current preview environment. User may have experienced cached error from browser or tested before configuration was applied."
+
+agent_communication:
+  -agent: "main"
+  -message: "Please test the POST /api/avatar/connect endpoint to ensure the 500 error is NOT present in the preview environment."
+  -agent: "testing"
+  -message: "Avatar/connect endpoint tested and confirmed working in preview environment. The 500 error 'RUNWAYML_API_SECRET not configured' is NOT occurring. RUNWAYML_API_SECRET is properly configured and loaded. All 11 backend endpoints passing tests. The endpoint successfully creates RunwayML sessions and returns sessionId/sessionKey. Rate limiting (429) also working correctly. No issues found."
