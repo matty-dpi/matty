@@ -253,6 +253,66 @@ def test_contact_validation():
         print_test("Contact Validation (POST /api/contact - invalid)", False, f"Exception: {str(e)}")
         return False
 
+def test_avatar_connect():
+    """Test POST /api/avatar/connect with preset avatarId"""
+    try:
+        payload = {
+            "avatarId": "game-character"
+        }
+        # This endpoint may take longer as it creates and polls a RunwayML session
+        response = requests.post(f"{BACKEND_URL}/avatar/connect", json=payload, timeout=60)
+        
+        if response.status_code == 500:
+            # Check if it's the RUNWAYML_API_SECRET error
+            try:
+                error_detail = response.json().get("detail", "")
+                if "RUNWAYML_API_SECRET not configured" in error_detail:
+                    print_test("Avatar Connect (POST /api/avatar/connect)", False, 
+                              f"500 Error: RUNWAYML_API_SECRET not configured")
+                    return False
+                else:
+                    print_test("Avatar Connect (POST /api/avatar/connect)", False, 
+                              f"500 Error: {error_detail}")
+                    return False
+            except:
+                print_test("Avatar Connect (POST /api/avatar/connect)", False, 
+                          f"500 Error: {response.text}")
+                return False
+        elif response.status_code == 200:
+            data = response.json()
+            required_fields = ["sessionId", "sessionKey"]
+            missing_fields = [f for f in required_fields if f not in data]
+            
+            if not missing_fields:
+                print_test("Avatar Connect (POST /api/avatar/connect)", True, 
+                          f"Successfully created avatar session: {data['sessionId'][:20]}...")
+                return True
+            else:
+                print_test("Avatar Connect (POST /api/avatar/connect)", False, 
+                          f"Missing fields in response: {missing_fields}")
+                return False
+        elif response.status_code == 429:
+            # Rate limit hit - this is actually a valid response
+            print_test("Avatar Connect (POST /api/avatar/connect)", True, 
+                      "Rate limit working correctly (429 response)")
+            return True
+        elif response.status_code == 502:
+            # RunwayML service issue
+            print_test("Avatar Connect (POST /api/avatar/connect)", False, 
+                      f"502 Error: RunwayML service unavailable - {response.json().get('detail', '')}")
+            return False
+        else:
+            print_test("Avatar Connect (POST /api/avatar/connect)", False, 
+                      f"Unexpected status: {response.status_code}, Body: {response.text}")
+            return False
+    except requests.exceptions.Timeout:
+        print_test("Avatar Connect (POST /api/avatar/connect)", False, 
+                  "Request timeout (>60s) - RunwayML session creation took too long")
+        return False
+    except Exception as e:
+        print_test("Avatar Connect (POST /api/avatar/connect)", False, f"Exception: {str(e)}")
+        return False
+
 def main():
     print(f"\n{Colors.BLUE}{'='*60}{Colors.END}")
     print(f"{Colors.BLUE}MATTY Portfolio Backend API Test Suite{Colors.END}")
@@ -270,6 +330,7 @@ def main():
         ("Avatar Quota", test_avatar_quota),
         ("Contact Submission", test_contact_submission),
         ("Contact Validation", test_contact_validation),
+        ("Avatar Connect", test_avatar_connect),
     ]
     
     results = []

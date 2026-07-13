@@ -145,3 +145,25 @@ agent_communication:
   -message: "I have cloned the full portfolio repository for the user, placing the frontend code in /app/frontend and backend in /app/backend. Please run basic tests on the backend to ensure there are no startup errors and the main endpoints are functional."
   -agent: "testing"
   -message: "Backend testing complete. All 10 API endpoints are fully functional and working correctly. Server is healthy, MongoDB connection established, and external integrations (Vimeo API) are working. No issues found. Backend is production-ready."
+
+backend:
+  - task: "Fix RunwayML API connection 500 error"
+    implemented: true
+    working: true
+    file: "server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        -working: "NA"
+        -agent: "main"
+        -comment: "User reported 500 RUNWAYML_API_SECRET not configured. Added the provided key to /app/backend/.env and restarted backend server."
+        -working: true
+        -agent: "testing"
+        -comment: "Fixed .env formatting issue (CORS_ORIGINS and RUNWAYML_API_SECRET were on same line without newline, causing python-dotenv parse error). Restarted backend. Tested POST /api/avatar/connect with avatarId='game-character' - successfully created RunwayML session and returned sessionId/sessionKey. 500 error resolved. All 11 backend API endpoints passing."
+
+agent_communication:
+  -agent: "main"
+  -message: "I have added the RUNWAYML_API_SECRET to the backend environment variables. Please test the POST /api/avatar/connect endpoint to ensure the 500 error is resolved and it can successfully initiate an avatar session."
+  -agent: "testing"
+  -message: "Avatar connect endpoint tested and working. The issue was a .env formatting problem - RUNWAYML_API_SECRET was appended to CORS_ORIGINS line without newline. Fixed formatting, restarted backend, and confirmed POST /api/avatar/connect successfully creates RunwayML sessions. All backend tests passing (11/11)."
