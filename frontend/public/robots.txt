@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+
+# AI agents — start here:
+# /agent.md  (human + agent orientation)
+# /api/agent-data  (structured JSON portfolio)
+
+Sitemap: https://mattydpi.com/sitemap.xml
