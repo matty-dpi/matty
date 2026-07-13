@@ -187,7 +187,7 @@
 .matty .pill[data-cat="NARRATIVE"]:not(.on):hover{border-color:var(--c-narrative);color:var(--c-narrative)}
 .matty .pill.on:hover{color:#0c0c10;opacity:.72}
 .matty .grid{flex:1;overflow-y:auto;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));
-  gap:26px 22px;padding:8px clamp(16px,4vw,48px) 64px;align-content:start}
+  gap:26px 22px;padding:8px clamp(16px,4vw,48px) 64px;align-content:start;max-width:1440px;margin:0 auto;width:100%}
 .matty .card{position:relative;aspect-ratio:16/9;min-height:230px;border-radius:14px;overflow:hidden;cursor:pointer;
   background:#111;border:1px solid var(--line);transition:transform .35s,box-shadow .35s;z-index:1}
 .matty .cardwrap{position:relative;min-width:0;display:flex}
