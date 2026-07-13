@@ -20,7 +20,12 @@ const fmt = (s) => `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(
 const PlayGlyph = () => (<svg viewBox="0 0 24 24"><path d="M6 4l14 8-14 8z" /></svg>);
 
 export default function App() {
-  const [view, setView] = useState(null);       // reel | about | matty | contact | null(landing)
+  const [view, setView] = useState(() => {
+    const path = window.location.pathname.slice(1);
+    const validViews = ["reel", "about", "mattybot", "contact", "projects"];
+    if (validViews.includes(path)) return path;
+    return null;
+  });
   const [navIn, setNavIn] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [filters, setFilters] = useState(new Set());
@@ -60,6 +65,16 @@ export default function App() {
   // real titles + thumbnails fetched live from Vimeo (via backend oEmbed proxy)
   const [meta, setMeta] = useState({});
   useEffect(() => {
+  useEffect(() => {
+    const handlePopState = () => {
+      const path = window.location.pathname.slice(1);
+      const validViews = ["reel", "about", "mattybot", "contact", "projects"];
+      setView(validViews.includes(path) ? path : null);
+    };
+    window.addEventListener("popstate", handlePopState);
+    return () => window.removeEventListener("popstate", handlePopState);
+  }, []);
+
     axios
       .post(`${API}/reel-meta`, ITEMS.map((it) => ({ vimeoId: it.vimeoId, vimeoHash: it.vimeoHash || null })))
       .then((r) => setMeta(r.data || {}))
@@ -188,6 +203,7 @@ export default function App() {
   const go = (v) => {
     setMenuOpen(false);
     setView((cur) => (cur === v ? cur : v));
+    window.history.pushState({}, "", `/${v}`);
     if (["reel", "projects", "about", "contact", "mattybot"].includes(v)) {
       closeFull();
       // exit the hero video play mode before switching sections (stops video + hides controls/X)
@@ -197,6 +213,7 @@ export default function App() {
   };
   const goHome = () => {
     setView(null); setMenuOpen(false); closeFull(); setPlaying(false); setControlsShow(false);
+    window.history.pushState({}, "", "/");
     if (playerRef.current) playerRef.current.pause().catch(() => {});
   };
 

@@ -87,6 +87,11 @@
 .matty .reel-video.on{opacity:1;visibility:visible;cursor:pointer}
 .matty .reel-video iframe{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
   width:100vw;height:56.25vw;min-height:100vh;min-width:177.78vh;border:0;pointer-events:none}
+@media (max-aspect-ratio: 1/1) {
+  .matty .reel-video iframe {
+    width: 177.78vw; height: 100vw; min-width: 0; min-height: 0;
+  }
+}
 
 /* upper-right close X — 20% smaller and nudged down/left so the nav Contact pill never overlaps it */
 .matty .reel-close{position:fixed;top:50px;right:52px;z-index:96;width:37px;height:37px;border-radius:50%;
