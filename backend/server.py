@@ -28,7 +28,7 @@ db = client[os.environ['DB_NAME']]
 app = FastAPI(title="matty")
 api_router = APIRouter(prefix="/api")
 
-SITE_URL = "https://mattydpi.com"
+SITE_URL = os.environ.get('SITE_URL', 'https://mattydpi.com')
 
 # ----------------------- Email (Resend) -----------------------
 resend.api_key = os.environ.get("RESEND_API_KEY", "")
