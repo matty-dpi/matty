@@ -233,3 +233,25 @@ agent_communication:
   -message: "Please test the POST /api/avatar/connect endpoint to ensure the 500 error is NOT present in the preview environment."
   -agent: "testing"
   -message: "Avatar/connect endpoint tested and confirmed working in preview environment. The 500 error 'RUNWAYML_API_SECRET not configured' is NOT occurring. RUNWAYML_API_SECRET is properly configured and loaded. All 11 backend endpoints passing tests. The endpoint successfully creates RunwayML sessions and returns sessionId/sessionKey. Rate limiting (429) also working correctly. No issues found."
+
+frontend:
+  - task: "Fix nested useEffect hooks violation"
+    implemented: true
+    working: true
+    file: "App.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        -working: "NA"
+        -agent: "main"
+        -comment: "User reported deployment failure due to nested useEffect hooks in App.js. Separated the hooks into independent siblings and ran yarn build which passed."
+        -working: true
+        -agent: "testing"
+        -comment: "Verified React application mounts successfully without any React Hook errors. Tested frontend at https://matty-build.preview.emergentagent.com. NO React Hook violations detected in console logs. All core components rendered correctly: main app container, navigation, hero section with logo and play button, reel section, about section, contact section, and projects section. All useEffect hooks are working properly. The nested useEffect fix was successful and the app is fully functional."
+
+agent_communication:
+  -agent: "main"
+  -message: "I fixed the nested useEffect hooks in App.js that were causing the build failure. Please perform a quick frontend health check to verify that the app still renders correctly without runtime hook errors."
+  -agent: "testing"
+  -message: "Frontend health check complete. React application is working perfectly. NO React Hook errors or violations detected. All components rendered successfully and useEffect hooks are functioning correctly. The nested useEffect fix resolved the deployment issue without introducing any runtime errors. App is production-ready."

@@ -64,7 +64,8 @@ export default function App() {
 
   // real titles + thumbnails fetched live from Vimeo (via backend oEmbed proxy)
   const [meta, setMeta] = useState({});
-  useEffect(() => {
+  
+  // URL sync/deep-linking
   useEffect(() => {
     const handlePopState = () => {
       const path = window.location.pathname.slice(1);
@@ -75,6 +76,8 @@ export default function App() {
     return () => window.removeEventListener("popstate", handlePopState);
   }, []);
 
+  // Fetch vimeo metadata
+  useEffect(() => {
     axios
       .post(`${API}/reel-meta`, ITEMS.map((it) => ({ vimeoId: it.vimeoId, vimeoHash: it.vimeoHash || null })))
       .then((r) => setMeta(r.data || {}))
